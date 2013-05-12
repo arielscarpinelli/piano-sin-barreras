@@ -1,0 +1,48 @@
+@(title:String, id: String)
+
+@main("Piano sin barreras") {
+
+<h1>@{title}</h1>
+
+<h2>Partitura</h2>
+<div id="content" aria-live="polite">
+<h3>Compas</h3>
+<div id="measure">Cargando...</div>
+<h3>Mano</h3>
+<div id="staff">Cargando...</div>
+<h3>Nota</h3>
+<div id="note">Cargando...</div>
+</div>
+
+<h3>Ayuda</h3>
+<dl class="dl-horizontal">
+  <dt>Tecla derecha</dt>
+  <dd>Siguiente nota</dd>
+
+  <dt>Tecla izquierda</dt>
+  <dd>Anterior nota</dd>
+
+  <dt>Tecla abajo</dt>
+  <dd>Siguiente mano / siguiente compás</dd>
+
+  <dt>Tecla arriba</dt>
+  <dd>Anterior mano / anterior compás</dd>
+
+  <dt>Tecla I / Tecla Inicio</dt>
+  <dd>Ir al inicio de la partitura</dd>
+
+</dl>
+<script>
+
+	$(function() {
+		
+		jsRoutes.controllers.Scores.get("@id").ajax({
+			success: function(result) {
+				$("#content").scoreReader({score: result});
+			}
+		});
+	});
+
+</script>
+    
+}
