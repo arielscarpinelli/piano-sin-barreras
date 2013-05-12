@@ -1,6 +1,13 @@
 @(title:String, id: String)
 
-@main("Piano sin barreras") {
+@extraHead = {
+        <script src="@routes.Assets.at("javascripts/score-reader.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/MIDI.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/Base64.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/base64binary.js")" type="text/javascript"></script>
+}
+
+@main("Piano sin barreras", extraHead) {
 
 <h1>@{title}</h1>
 
@@ -31,11 +38,20 @@
   <dt>Tecla I / Tecla Inicio</dt>
   <dd>Ir al inicio de la partitura</dd>
 
+  <dt>Tecla Espacio</dt>
+  <dd>Reproducir nota actual</dd>
+
 </dl>
 <script>
 
 	$(function() {
 		
+		MIDI.loadPlugin({
+			soundfontUrl: "@routes.Assets.at("soundfont/")",
+			instrument: "acoustic_grand_piano",
+			callback: function() {}
+		});
+
 		jsRoutes.controllers.Scores.get("@id").ajax({
 			success: function(result) {
 				$("#content").scoreReader({score: result});

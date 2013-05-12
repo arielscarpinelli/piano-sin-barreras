@@ -138,6 +138,14 @@
 		this.begin = function() {
 			this.setScore(this.score);
 		};
+		
+		this.play = function() {
+			var currentNote = this.getCurrentNote();
+			var noteName = currentNote.pitch + currentNote.octave;
+			note = MIDI.keyToNote[noteName];
+			MIDI.noteOn(0, note, 127, 0);
+			MIDI.noteOff(0, note, 0.75);			
+		}
 
 
 		this.init(element, options);
@@ -178,7 +186,8 @@
 				left : 37,
 				up : 38,
 				right : 39,
-				down : 40
+				down : 40,
+				space: 32
 			};
 
 			switch (keyCode) {
@@ -197,6 +206,9 @@
 				break;
 			case arrow.down:
 				self.nextStaff();
+				break;
+			case arrow.space:
+				self.play();
 				break;
 			}
 		});
