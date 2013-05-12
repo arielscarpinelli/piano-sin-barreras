@@ -14,7 +14,7 @@
 
 			// Manipulate element here ...
 			this.setScore(this.options.score);
-			setKeyBindings(this);
+			setKeyBindings(this, element);
 		};
 
 		// Public function
@@ -178,8 +178,8 @@
 		element.children("#note").html(self.getCurrentNote()["name"]);
 	}
 
-	function setKeyBindings(self) {
-		$(document).keydown(function(e) {
+	function setKeyBindings(self, element) {
+		element.children("#commands").keydown(function(e) {
 			var keyCode = e.keyCode || e.which, arrow = {
 				I: 73,
 				home : 36,
@@ -211,7 +211,10 @@
 				self.play();
 				break;
 			}
+			
+			e.preventDefault();
 		});
+		element.children("#commands").focus();
 	}
 
 })(jQuery);
