@@ -15,7 +15,7 @@ public class Measure {
 	private int number;
 	private int divisions;
 
-	private List<Staff> staves = new ArrayList<>();
+	private List<Staff> staves = new ArrayList<Staff>();
 
 	public List<Staff> getStaves() {
 		return staves;

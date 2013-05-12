@@ -7,7 +7,7 @@ import com.audiveris.proxymusic.ScorePartwise;
 import com.audiveris.proxymusic.ScorePartwise.Part;
 
 public class Score {
-	private List<Measure> measures = new ArrayList<>();
+	private List<Measure> measures = new ArrayList<Measure>();
 
 	public List<Measure> getMeasures() {
 		return measures;

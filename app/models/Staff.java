@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Staff {
 
-	private List<Symbol> notes = new ArrayList<>();
+	private List<Symbol> notes = new ArrayList<Symbol>();
 	private int position;
 	
 	public Staff(int position) {
