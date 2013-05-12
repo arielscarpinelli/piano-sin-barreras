@@ -88,7 +88,7 @@
 				this.notePosition--;
 				renderNote(this, element);
 			} else {
-				this.prevMeasure();
+				this.prevMeasure(false, true);
 			}
 		};
 
@@ -124,12 +124,16 @@
 			}			
 		};
 
-		this.prevMeasure = function(resetStaff) {
+		this.prevMeasure = function(resetStaff, avoidResetNote) {
 			if (this.measurePosition > 0) {
 				this.measurePosition--;
-				this.notePosition = 0;
 				if (resetStaff) {
 					this.staffPosition = this.getStaves().length - 1;
+				}
+				if (avoidResetNote) {
+					this.notePosition = this.getNotes().length - 1;
+				} else {
+					this.notePosition = 0;
 				}
 				renderMeasure(this, element);
 			}			
@@ -183,15 +187,14 @@
 			var keyCode = e.keyCode || e.which, arrow = {
 				I: 73,
 				home : 36,
-				left : 37,
-				up : 38,
-				right : 39,
-				down : 40,
-				space: 32
+				left : 72,
+				up : 85,
+				right : 75,
+				down : 74,
+				Y: 89
 			};
 
 			switch (keyCode) {
-			case arrow.home:
 			case arrow.I:
 				self.begin();
 				break;
@@ -207,7 +210,7 @@
 			case arrow.down:
 				self.nextStaff();
 				break;
-			case arrow.space:
+			case arrow.Y:
 				self.play();
 				break;
 			}
