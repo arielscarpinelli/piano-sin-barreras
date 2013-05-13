@@ -11,8 +11,8 @@
 
 <h1>@{title}</h1>
 
-<div role="application" id="content" aria-live="polite" tabstop="1">
-	<h2>Partitura</h2>
+<div role="main" id="content" aria-live="polite" aria-labelledby="score">
+	<h2 id="score">Partitura</h2>
 	<h3>Compás</h3>
 	<div id="measure">Cargando...</div>
 	<h3>Mano</h3>
@@ -21,40 +21,29 @@
 	<div id="note">Cargando...</div>
 </div>
 <div id="navigation" role="navigation">
-	<h3>Como Navegar</h3>
-	<dl class="dl-horizontal">
-		<dt>F</dt>
-		<dd>
-			<a href="javascript:;" class="play">Reproducir nota actual</a>
-		</dd>
-
-		<dt>Flecha derecha</dt>
-		<dd>
-			<a href="javascript:;" class="next">Siguiente nota</a>
-		</dd>
-
-		<dt>Flecha izquierda</dt>
-		<dd>
-			<a href="javascript:;" class="prev">Anterior nota</a>
-		</dd>
-
-		<dt>Flecha abajo</dt>
-		<dd>
-			<a href="javascript:;" class="down">Siguiente mano / siguiente
+	<h3>Navegación</h3>
+	<ul class="unstyled">
+		<li>
+			<a href="javascript:;" class="play" accesskey="y">Reproducir nota actual</a>
+		</li>
+		<li>
+			<a href="javascript:;" class="next" accesskey="k">Siguiente nota</a>
+		</li>
+		<li>
+			<a href="javascript:;" class="prev" accesskey="h">Anterior nota</a>
+		</li>
+		<li>
+			<a href="javascript:;" class="down" accesskey="j">Siguiente mano / siguiente
 				compás</a>
-		</dd>
+		</li>
+		<li>
+			<a href="javascript:;" class="up" accesskey="u">Anterior mano / anterior compás</a>
+		</li>
+		<li>
+			<a href="javascript:;" class="begin" accesskey="i">Ir al inicio de la partitura</a>
+		</li>
 
-		<dt>Flecha arriba</dt>
-		<dd>
-			<a href="javascript:;" class="up">Anterior mano / anterior compás</a>
-		</dd>
-
-		<dt>J</dt>
-		<dd>
-			<a href="javascript:;" class="begin">Ir al inicio de la partitura</a>
-		</dd>
-
-	</dl>
+	</ul>
 </div>
 
 <script>

@@ -14,9 +14,9 @@
 
 			// Manipulate element here ...
 			this.setScore(this.options.score);
-			setKeyBindings(this, element);
+			//setKeyBindings(this, element);
 			setNavigationBindings(this, this.options.navigation);
-			element.focus();
+			//element.focus();
 		};
 
 		// Public function
@@ -171,17 +171,17 @@
 	}
 
 	function renderMeasure(self, element) {
-		element.children("#measure").html(self.getCurrentMeasure()["name"])
+		element.find("#measure").html(self.getCurrentMeasure()["name"])
 		renderStaff(self, element);
 	}
 
 	function renderStaff(self, element) {
-		element.children("#staff").html(self.getCurrentStaff()["name"])
+		element.find("#staff").html(self.getCurrentStaff()["name"])
 		renderNote(self, element);
 	}
 
 	function renderNote(self, element) {
-		element.children("#note").html(self.getCurrentNote()["name"]);
+		element.find("#note").html(self.getCurrentNote()["name"]);
 	}
 
 	function setKeyBindings(self, element) {
@@ -198,45 +198,49 @@
 			switch (keyCode) {
 			case key.home:
 				self.begin();
+    			e.preventDefault();
 				break;
 			case key.left:
 				self.prev();
+    			e.preventDefault();
 				break;
 			case key.up:
 				self.prevStaff();
+    			e.preventDefault();
 				break;
 			case key.right:
 				self.next();
+    			e.preventDefault();
 				break;
 			case key.down:
 				self.nextStaff();
+    			e.preventDefault();
 				break;
 			case key.play:
 				self.play();
+    			e.preventDefault();
 				break;
-			}
-			
-			e.preventDefault();
+			}			
 		});
 	}
 
 	function setNavigationBindings(self, element) {
-		element.children(".begin").click(function() {
+		element.find(".begin").click(function() {
 			self.begin();			
 		})
-		element.children(".prev").click(function() {
+		element.find(".prev").click(function() {
 			self.prev();			
 		})
-		element.children(".up").click(function() {
+		element.find(".up").click(function() {
 			self.prevStaff();			
 		})
-		element.children(".next").click(function() {
+		element.find(".next").click(function() {
 			self.next();			
 		})
-		element.children(".down").click(function() {
+		element.find(".down").click(function() {
 			self.nextStaff();			
 		})
-		element.children(".play").click(function() {
+		element.find(".play").click(function() {
 			self.play();			
 		})			
 	}
