@@ -1,48 +1,62 @@
 @(title:String, id: String)
 
 @extraHead = {
-        <script src="@routes.Assets.at("javascripts/score-reader.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/MIDI.min.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/Base64.js")" type="text/javascript"></script>
-        <script src="@routes.Assets.at("javascripts/base64binary.js")" type="text/javascript"></script>
-}
+	<script src="@routes.Assets.at("javascripts/score-reader.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/MIDI.min.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/Base64.js")" type="text/javascript"></script>
+	<script src="@routes.Assets.at("javascripts/base64binary.js")" type="text/javascript"></script>
+} 
 
 @main("Piano sin barreras", extraHead) {
 
 <h1>@{title}</h1>
 
-<h2>Partitura</h2>
-<div id="content" aria-live="polite">
-<input type="text" id="commands"/>
-<h3>Compas</h3>
-<div id="measure">Cargando...</div>
-<h3>Mano</h3>
-<div id="staff">Cargando...</div>
-<h3>Nota</h3>
-<div id="note">Cargando...</div>
+<div role="application" id="content" aria-live="polite" tabstop="1">
+	<h2>Partitura</h2>
+	<h3>Compás</h3>
+	<div id="measure">Cargando...</div>
+	<h3>Mano</h3>
+	<div id="staff">Cargando...</div>
+	<h3>Nota</h3>
+	<div id="note">Cargando...</div>
+</div>
+<div id="navigation" role="navigation">
+	<h3>Como Navegar</h3>
+	<dl class="dl-horizontal">
+		<dt>F</dt>
+		<dd>
+			<a href="javascript:;" class="play">Reproducir nota actual</a>
+		</dd>
+
+		<dt>Flecha derecha</dt>
+		<dd>
+			<a href="javascript:;" class="next">Siguiente nota</a>
+		</dd>
+
+		<dt>Flecha izquierda</dt>
+		<dd>
+			<a href="javascript:;" class="prev">Anterior nota</a>
+		</dd>
+
+		<dt>Flecha abajo</dt>
+		<dd>
+			<a href="javascript:;" class="down">Siguiente mano / siguiente
+				compás</a>
+		</dd>
+
+		<dt>Flecha arriba</dt>
+		<dd>
+			<a href="javascript:;" class="up">Anterior mano / anterior compás</a>
+		</dd>
+
+		<dt>J</dt>
+		<dd>
+			<a href="javascript:;" class="begin">Ir al inicio de la partitura</a>
+		</dd>
+
+	</dl>
 </div>
 
-<h3>Ayuda</h3>
-<dl class="dl-horizontal">
-  <dt>K</dt>
-  <dd>Siguiente nota</dd>
-
-  <dt>H</dt>
-  <dd>Anterior nota</dd>
-
-  <dt>J</dt>
-  <dd>Siguiente mano / siguiente compás</dd>
-
-  <dt>U</dt>
-  <dd>Anterior mano / anterior compás</dd>
-
-  <dt>I</dt>
-  <dd>Ir al inicio de la partitura</dd>
-
-  <dt>Y</dt>
-  <dd>Reproducir nota actual</dd>
-
-</dl>
 <script>
 
 	$(function() {
@@ -55,11 +69,11 @@
 
 		jsRoutes.controllers.Scores.get("@id").ajax({
 			success: function(result) {
-				$("#content").scoreReader({score: result});
+				$("#content").scoreReader({score: result, navigation: $("#navigation")});
 			}
 		});
 	});
 
 </script>
-    
+
 }

@@ -15,6 +15,8 @@
 			// Manipulate element here ...
 			this.setScore(this.options.score);
 			setKeyBindings(this, element);
+			setNavigationBindings(this, this.options.navigation);
+			element.focus();
 		};
 
 		// Public function
@@ -183,41 +185,60 @@
 	}
 
 	function setKeyBindings(self, element) {
-		element.children("#commands").keydown(function(e) {
-			var keyCode = e.keyCode || e.which, arrow = {
-				I: 73,
-				home : 36,
-				left : 72,
-				up : 85,
-				right : 75,
-				down : 74,
-				Y: 89
+		element.keydown(function(e) {
+			var keyCode = e.keyCode || e.which, key = {
+				home: 74, // J
+				left : 37,
+				up : 38,
+				right : 39,
+				down : 40,
+				play: 70 // F
 			};
 
 			switch (keyCode) {
-			case arrow.I:
+			case key.home:
 				self.begin();
 				break;
-			case arrow.left:
+			case key.left:
 				self.prev();
 				break;
-			case arrow.up:
+			case key.up:
 				self.prevStaff();
 				break;
-			case arrow.right:
+			case key.right:
 				self.next();
 				break;
-			case arrow.down:
+			case key.down:
 				self.nextStaff();
 				break;
-			case arrow.Y:
+			case key.play:
 				self.play();
 				break;
 			}
 			
 			e.preventDefault();
 		});
-		element.children("#commands").focus();
+	}
+
+	function setNavigationBindings(self, element) {
+		element.children(".begin").click(function() {
+			self.begin();			
+		})
+		element.children(".prev").click(function() {
+			self.prev();			
+		})
+		element.children(".up").click(function() {
+			self.prevStaff();			
+		})
+		element.children(".next").click(function() {
+			self.next();			
+		})
+		element.children(".down").click(function() {
+			self.nextStaff();			
+		})
+		element.children(".play").click(function() {
+			self.play();			
+		})			
 	}
 
 })(jQuery);
