@@ -95,30 +95,19 @@
 		};
 
 		this.nextStaff = function() {
-			if (this.staffPosition < this.getStaves().length - 1) {
 
-				var duration = this.getCurrentDuration();
+			if (this.staffPosition < this.getStaves().length - 1) {
 				this.staffPosition++;
-				this.notePosition = this.findNearPosition(duration);
-				renderStaff(this, element);
 			} else {
 				this.staffPosition = 0;
-				this.nextMeasure();
 			}
+
+			var duration = this.getCurrentDuration();
+			this.notePosition = this.findNearPosition(duration);
+			renderStaff(this, element);
 		};
 
-		this.prevStaff = function() {
-			if (this.staffPosition > 0) {
-				var duration = this.getCurrentDuration();
-				this.staffPosition--;
-				this.notePosition = this.findNearPosition(duration);
-				renderStaff(this, element);
-			} else {
-				this.prevMeasure(true);
-			}			
-		};
-
-		this.nextMeasure = function() {
+        this.nextMeasure = function() {
 			if (this.measurePosition < this.getMeasures().length - 1) {
 				this.measurePosition++;
 				this.notePosition = 0;
@@ -228,21 +217,24 @@
 		element.find(".begin").click(function() {
 			self.begin();			
 		})
+		element.find(".next").click(function() {
+			self.next();			
+		})
+		element.find(".hand").click(function() {
+			self.nextStaff();			
+		})
 		element.find(".prev").click(function() {
 			self.prev();			
 		})
 		element.find(".up").click(function() {
-			self.prevStaff();			
+			self.prevMeasure();			
+		})
+		element.find(".down").click(function() {
+			self.nextMeasure();			
 		})
 		element.find(".next").click(function() {
 			self.next();			
 		})
-		element.find(".down").click(function() {
-			self.nextStaff();			
-		})
-		element.find(".play").click(function() {
-			self.play();			
-		})			
 	}
 
 })(jQuery);

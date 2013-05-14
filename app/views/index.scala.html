@@ -11,17 +11,12 @@
 
 <h1>@{title}</h1>
 
-<div role="main" id="content" aria-live="polite" aria-labelledby="score">
-	<h2 id="score">Partitura</h2>
-	<h3>Compás</h3>
+<div role="main" id="content" aria-live="polite">
 	<div id="measure">Cargando...</div>
-	<h3>Mano</h3>
-	<div id="staff">Cargando...</div>
-	<h3>Nota</h3>
-	<div id="note">Cargando...</div>
+	<div id="staff"></div>
+	<div id="note"></div>
 </div>
 <div id="navigation" role="navigation">
-	<h3>Navegación</h3>
 	<ul class="inline">
 		<li>
 			<a href="javascript:;" class="play btn btn-large" accesskey="y" title="Reproducir nota actual"><i class="icon-music"></i></a>
@@ -30,16 +25,19 @@
 			<a href="javascript:;" class="next btn btn-large" accesskey="k" title="Siguiente nota"><i class="icon-arrow-right"></i></a>
 		</li>
 		<li>
+			<a href="javascript:;" class="hand btn btn-large" accesskey="i" title="Cambiar mano"><i class="icon-hand-down"></i></a>
+		</li>
+		<li>
 			<a href="javascript:;" class="prev btn btn-large" accesskey="h" title="Anterior nota"><i class="icon-arrow-left"></i></a>
 		</li>
 		<li>
-			<a href="javascript:;" class="down btn btn-large" accesskey="j" title="Siguiente mano / siguiente compás"><i class="icon-arrow-down"></i></a>
+			<a href="javascript:;" class="down btn btn-large" accesskey="j" title="Siguiente compás"><i class="icon-arrow-down"></i></a>
 		</li>
 		<li>
-			<a href="javascript:;" class="up btn btn-large" accesskey="u" title="Anterior mano / anterior compás"><i class="icon-arrow-up"></i></a>
+			<a href="javascript:;" class="up btn btn-large" accesskey="u" title="Anterior compás"><i class="icon-arrow-up"></i></a>
 		</li>
 		<li>
-			<a href="javascript:;" class="begin btn btn-large" accesskey="i" title="Ir al inicio de la partitura"><i class="icon-eject"></i></a>
+			<a href="javascript:;" class="begin btn btn-large" accesskey="f" title="Ir al inicio de la partitura"><i class="icon-eject"></i></a>
 		</li>
 
 	</ul>
