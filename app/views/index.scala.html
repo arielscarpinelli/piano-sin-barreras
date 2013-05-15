@@ -1,47 +1,51 @@
 @(title:String, id: String)
 
 @extraHead = {
-	<script src="@routes.Assets.at("javascripts/score-reader.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/MIDI.min.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/Base64.js")" type="text/javascript"></script>
-	<script src="@routes.Assets.at("javascripts/base64binary.js")" type="text/javascript"></script>
-} 
+<script src="@routes.Assets.at("javascripts/score-reader.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/MIDI.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/Base64.js")" type="text/javascript"></script>
+<script src="@routes.Assets.at("javascripts/base64binary.js")" type="text/javascript"></script>
+}
 
 @main("Piano sin barreras", extraHead) {
 
-<h1>@{title}</h1>
+<h1 id="title">@{title}</h1>
 
-<div role="main" id="content" aria-live="polite">
-	<div id="measure">Cargando...</div>
-	<div id="staff"></div>
-	<div id="note"></div>
-</div>
-<div id="navigation" role="navigation">
-	<ul class="inline">
-		<li>
-			<a href="javascript:;" class="play btn btn-large" accesskey="y" title="Reproducir nota actual"><i class="icon-music"></i></a>
-		</li>
-		<li>
-			<a href="javascript:;" class="next btn btn-large" accesskey="k" title="Siguiente nota"><i class="icon-arrow-right"></i></a>
-		</li>
-		<li>
-			<a href="javascript:;" class="hand btn btn-large" accesskey="i" title="Cambiar mano"><i class="icon-hand-down"></i></a>
-		</li>
-		<li>
-			<a href="javascript:;" class="prev btn btn-large" accesskey="h" title="Anterior nota"><i class="icon-arrow-left"></i></a>
-		</li>
-		<li>
-			<a href="javascript:;" class="down btn btn-large" accesskey="j" title="Siguiente compás"><i class="icon-arrow-down"></i></a>
-		</li>
-		<li>
-			<a href="javascript:;" class="up btn btn-large" accesskey="u" title="Anterior compás"><i class="icon-arrow-up"></i></a>
-		</li>
-		<li>
-			<a href="javascript:;" class="begin btn btn-large" accesskey="f" title="Ir al inicio de la partitura"><i class="icon-eject"></i></a>
-		</li>
-
-	</ul>
-</div>
+<ul role="main" id="content" aria-live="polite" class="unstyled" arial-labeledby="title">
+	<li>
+		<p id="measure">Cargando partitura, espere por favor</p>
+		<ul role="menubar" class="inline">
+			<li><a href="javascript:;"
+				class="down btn btn-large" accesskey="j" title="Siguiente compás"><i
+				class="icon-arrow-down"></i></a></li>
+			<li><a href="javascript:;" class="up btn btn-large" accesskey="u"
+				title="Anterior compás"><i class="icon-arrow-up"></i></a>
+			</li>
+			<li><a href="javascript:;" class="begin btn btn-large"
+						accesskey="f" title="Ir al inicio de la partitura"><i
+							class="icon-eject"></i></a></li>	
+		</ul>
+	</li>
+	<li>
+		<p id="staff">.</p>
+		<ul role="menubar" class="inline">
+			<li><a href="javascript:;" class="hand btn btn-large"
+			accesskey="i" title="Cambiar mano"><i class="icon-hand-down"></i></a></li>
+		</ul>
+	</li>
+	<li>
+		<p id="note"></p>
+		<ul role="menubar" class="inline">
+			<li><a href="javascript:;" class="next btn btn-large"
+				accesskey="k" title="Siguiente nota"><i class="icon-arrow-right"></i></a></li>		
+			<li><a href="javascript:;" class="play btn btn-large"
+				accesskey="y" title="Reproducir nota actual"><i
+					class="icon-music"></i></a></li>
+			<li><a href="javascript:;" class="prev btn btn-large"
+				accesskey="h" title="Anterior nota"><i class="icon-arrow-left"></i></a></li>
+		</ul>
+	</li>
+</ul>
 
 <script>
 
@@ -55,7 +59,7 @@
 
 		jsRoutes.controllers.Scores.get("@id").ajax({
 			success: function(result) {
-				$("#content").scoreReader({score: result, navigation: $("#navigation")});
+				$("#content").scoreReader({score: result});
 			}
 		});
 	});

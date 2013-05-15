@@ -15,7 +15,7 @@
 			// Manipulate element here ...
 			this.setScore(this.options.score);
 			//setKeyBindings(this, element);
-			setNavigationBindings(this, this.options.navigation);
+			setNavigationBindings(this, element);
 			//element.focus();
 		};
 
