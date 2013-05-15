@@ -14,9 +14,7 @@
 
 			// Manipulate element here ...
 			this.setScore(this.options.score);
-			//setKeyBindings(this, element);
 			setNavigationBindings(this, element);
-			//element.focus();
 		};
 
 		// Public function
@@ -137,9 +135,11 @@
 		this.play = function() {
 			var currentNote = this.getCurrentNote();
 			var noteName = currentNote.pitch + currentNote.octave;
-			note = MIDI.keyToNote[noteName];
-			MIDI.noteOn(0, note, 127, 0);
-			MIDI.noteOff(0, note, 0.75);			
+			if (window.MIDI) {
+				note = MIDI.keyToNote[noteName];
+				MIDI.noteOn(0, note, 127, 0);
+				MIDI.noteOff(0, note, 0.75);			
+			}
 		}
 
 
@@ -173,46 +173,6 @@
 		element.find("#note").html(self.getCurrentNote()["name"]);
 	}
 
-	function setKeyBindings(self, element) {
-		element.keydown(function(e) {
-			var keyCode = e.keyCode || e.which, key = {
-				home: 74, // J
-				left : 37,
-				up : 38,
-				right : 39,
-				down : 40,
-				play: 70 // F
-			};
-
-			switch (keyCode) {
-			case key.home:
-				self.begin();
-    			e.preventDefault();
-				break;
-			case key.left:
-				self.prev();
-    			e.preventDefault();
-				break;
-			case key.up:
-				self.prevStaff();
-    			e.preventDefault();
-				break;
-			case key.right:
-				self.next();
-    			e.preventDefault();
-				break;
-			case key.down:
-				self.nextStaff();
-    			e.preventDefault();
-				break;
-			case key.play:
-				self.play();
-    			e.preventDefault();
-				break;
-			}			
-		});
-	}
-
 	function setNavigationBindings(self, element) {
 		element.find(".begin").click(function() {
 			self.begin();			
@@ -231,9 +191,6 @@
 		})
 		element.find(".down").click(function() {
 			self.nextMeasure();			
-		})
-		element.find(".next").click(function() {
-			self.next();			
 		})
 		element.find(".play").click(function() {
 			self.play();			
