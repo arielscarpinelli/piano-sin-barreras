@@ -235,6 +235,9 @@
 		element.find(".next").click(function() {
 			self.next();			
 		})
+		element.find(".play").click(function() {
+			self.play();			
+		})
 	}
 
 })(jQuery);
