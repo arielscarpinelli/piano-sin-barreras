@@ -1,7 +1,9 @@
 package models;
 
 import java.math.BigDecimal;
+import java.util.List;
 
+import com.audiveris.proxymusic.EmptyPlacement;
 import com.audiveris.proxymusic.Pitch;
 
 public class Note extends Symbol {
@@ -11,7 +13,13 @@ public class Note extends Symbol {
 	private NoteType type = NoteType._WHOLE;
 	private int duration = 0;
 	private int alter = 0;
+	private int dots = 0;
+	private boolean chord;
 
+	public boolean chord() {
+		return chord;
+	}
+	
 	public NotePitch getPitch() {
 		return pitch;
 	}
@@ -37,6 +45,15 @@ public class Note extends Symbol {
 			name += " sostenido ";
 		}
 		name += " " + NoteOctave.valueOf("_" + octave).getTranslation() + " " + type.getTranslation();
+		
+		if (dots > 0) {
+			if (dots == 1) {
+				name += " puntillo";
+			} else {
+				name += " " + dots + " puntillos";
+			}
+		}
+		
 		return name;
 	}
 	
@@ -60,7 +77,16 @@ public class Note extends Symbol {
 		
 		note.duration = xmlNote.getDuration().intValue();
 		
+		List<EmptyPlacement> dots = xmlNote.getDot();
+		if (dots != null) {
+			for(@SuppressWarnings("unused") EmptyPlacement dot : dots) {
+				note.dots++;
+			}
+		}
+		
+		note.chord = (xmlNote.getChord() != null);
+		
 		return note;
 	}
-	
+
 }

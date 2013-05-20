@@ -1,0 +1,15 @@
+@(scores:List[Score])
+
+@main("Partituras") {
+
+<h1 id="title">Partituras</h1>
+
+<ul role="main" id="content" aria-live="polite" class="unstyled" arial-labeledby="title">
+	@for(score <- scores) {
+	<li>
+		<a href="@routes.Scores.view(score.getSlug())">@score.getName()</a>
+	</li>
+	}
+</ul>
+
+}

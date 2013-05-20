@@ -31,7 +31,7 @@ public class Attributes extends Symbol {
 	public String getName() {
 		String toReturn = "";
 		if (timeLower > 0 && timeUpper > 0) {
-			toReturn += timeLower + " sobre " + timeUpper;
+			toReturn += timeUpper + " sobre " + timeLower;
 		}
 		if (key != null) {
 			toReturn += " " + key.name().replace("_", " ");

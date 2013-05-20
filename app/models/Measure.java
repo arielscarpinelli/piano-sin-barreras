@@ -35,7 +35,7 @@ public class Measure {
 
 	public static Measure fromXmlMeasure(
 			com.audiveris.proxymusic.ScorePartwise.Part.Measure xmlMeasure,
-			Score score) {
+			ScoreContent score) {
 
 		Measure measure = new Measure();
 		measure.number = Integer.parseInt(xmlMeasure.getNumber());
@@ -43,6 +43,8 @@ public class Measure {
 		Staff stave = new Staff(measure.staves.size() + 1);
 		measure.staves.add(stave);
 
+		Chord currentChord = null;
+		
 		for (Object noteOrBackupOrForward : xmlMeasure
 				.getNoteOrBackupOrForward()) {
 			if (noteOrBackupOrForward instanceof com.audiveris.proxymusic.Attributes) {
@@ -50,10 +52,16 @@ public class Measure {
 						stave,
 						(com.audiveris.proxymusic.Attributes) noteOrBackupOrForward);
 			} else if (noteOrBackupOrForward instanceof com.audiveris.proxymusic.Note) {
-				// TODO: check for chord
-				stave.getNotes()
-						.add(Note
-								.fromXmlNote((com.audiveris.proxymusic.Note) noteOrBackupOrForward));
+				Note note = Note
+						.fromXmlNote((com.audiveris.proxymusic.Note) noteOrBackupOrForward);
+				if (!note.chord()) {
+					currentChord = null;
+				}
+				if (currentChord == null) {
+					currentChord = new Chord();
+					stave.getNotes().add(currentChord);
+				}
+				currentChord.add(note);
 			} else if (noteOrBackupOrForward instanceof Backup) {
 				stave = new Staff(measure.staves.size() + 1);
 				measure.staves.add(stave);
@@ -70,6 +78,14 @@ public class Measure {
 		if (divisions != null) {
 			measure.divisions = divisions.intValue();
 		}
+	}
+
+	public void join(Measure other) {
+		for(Staff stave : other.staves) {
+			stave.setPosition(staves.size() + 1);
+			staves.add(stave);
+		}
+		// TODO: join attributes
 	}
 
 }

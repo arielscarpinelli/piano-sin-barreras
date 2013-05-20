@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import models.Score;
+import models.ScoreContent;
 
 import org.xml.sax.SAXException;
 
@@ -20,12 +21,20 @@ import com.audiveris.proxymusic.util.Marshalling;
 
 public class Scores extends Controller {
 	
-	public static Result get(String name) throws FileNotFoundException, JAXBException, SAXException, ParserConfigurationException {
+    public static Result view(String slug) {
+        return ok(views.html.scoreView.render(Score.findBySlug(slug).getName(), slug));
+    }
+  
+    public static Result list() {
+        return ok(views.html.scoreList.render(Score.findAll()));
+    }
 
-		FileInputStream fileInputStream = new FileInputStream(Play.current().getFile("scores/" + name + ".xml"));
+    public static Result get(String slug) throws FileNotFoundException, JAXBException, SAXException, ParserConfigurationException {
+
+		FileInputStream fileInputStream = new FileInputStream(Play.current().getFile("scores/" + slug + ".xml"));
 		ScorePartwise score = Marshalling.unmarshal(fileInputStream);
 		
-		return ok(Json.toJson(Score.fromScorePartwise(score)));
+		return ok(Json.toJson(ScoreContent.fromScorePartwise(score)));
 	}
 	
 }

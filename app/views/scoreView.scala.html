@@ -1,4 +1,4 @@
-@(title:String, id: String)
+@(title:String, slug: String)
 
 @extraHead = {
 <script src="@routes.Assets.at("javascripts/score-reader.js")" type="text/javascript"></script>
@@ -9,7 +9,7 @@
 <script src="@routes.Assets.at("javascripts/base64binary.js")" type="text/javascript"></script>
 }
 
-@main("Piano sin barreras", extraHead) {
+@main(title, extraHead) {
 
 <h1 id="title">@{title}</h1>
 
@@ -67,7 +67,7 @@ Para poder reproducir musicalmente las notas se necesita de un navegador interne
 			$(".midi").remove();
 		}
 
-		jsRoutes.controllers.Scores.get("@id").ajax({
+		jsRoutes.controllers.Scores.get("@slug").ajax({
 			success: function(result) {
 				$("#content").scoreReader({score: result});
 			}
