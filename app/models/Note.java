@@ -135,7 +135,7 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 
 	@Override
 	public int compareTo(Note o) {
-		int compare = Integer.compare(octave, o.octave);
+		int compare = Double.compare(octave, o.octave);
 		return compare == 0 ? pitch.compareTo(o.pitch) : compare;
 	}
 
