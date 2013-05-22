@@ -13,4 +13,18 @@ public enum NotePitch {
 	public String getTranslation() {
 		return translation;
 	}
+
+	public NotePitch move(int direction) {
+		NotePitch[] values = NotePitch.values();
+		int target = ordinal() + direction;
+		while (target < 0) {
+			target+= values.length-1;
+		}
+		return values[target % (values.length-1)];
+	}
+	
+	public boolean changesOctaveWithMove(int direction) {
+		int targetOrdinal = (ordinal() + direction);
+		return (targetOrdinal < 0) || (targetOrdinal >= (values().length-1));
+	}
 }

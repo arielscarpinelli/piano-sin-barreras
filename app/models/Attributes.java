@@ -34,7 +34,7 @@ public class Attributes extends Symbol {
 			toReturn += timeUpper + " sobre " + timeLower;
 		}
 		if (key != null) {
-			toReturn += " " + key.name().replace("_", " ");
+			toReturn += " Armadura de " + key.name().replace("_", " ");
 		}
 		return toReturn;
 	}

@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Staff {
 
-	private List<Symbol> notes = new ArrayList<Symbol>();
+	private List<Symbol> symbols = new ArrayList<Symbol>();
 	private int position;
 	
 	public Staff(int position) {
 		this.position = position;
 	}
 
-	public List<Symbol> getNotes() {
-		return notes;
+	public List<Symbol> getSymbols() {
+		return symbols;
 	}
 
 	public String getName() {

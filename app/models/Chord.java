@@ -2,29 +2,47 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Chord extends Note {
 	
-	private List<Note> notes = new ArrayList<Note>();
-
-	public List<Note> getNotes() {
-		return notes;
-	}
+	private SortedSet<Note> notes = new TreeSet<Note>();
 	
+	@Override
+	public List<String> getSounds() {
+		List<String> sounds = new ArrayList<String>();
+		for(Note note : notes) {
+			sounds.addAll(note.getSounds());
+		}
+		return sounds;
+	}
+
 	public void add(Note note) {
 		notes.add(note);
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		String result = "";
+		Note lastNote = null;
+		for (Note note : notes) {
+			result += note.getDiff(lastNote).getName() + " ";
+			lastNote = note;
+		}
+		return result;
 	}
 
 	@Override
 	public int getDuration() {
-		// TODO Auto-generated method stub
-		return 0;
+		int duration = 0;
+		for (Note note : notes) {
+			int noteDuration = note.getDuration();
+			if (noteDuration > duration) {
+				duration = noteDuration;
+			}
+		}
+		return duration;
 	}
 
 }

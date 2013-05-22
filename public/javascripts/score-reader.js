@@ -4,7 +4,7 @@
 		this.options = {};
 		this.measurePosition = 0;
 		this.staffPosition = 0;
-		this.notePosition = 0;
+		this.symbolPosition = 0;
 		this.score = null;
 
 		element.data('scoreReader', this);
@@ -22,7 +22,7 @@
 			this.score = score;
 			this.measurePosition = 0;
 			this.staffPosition = 0;
-			this.notePosition = 0;
+			this.symbolPosition = 0;
 
 			render(this, element)
 		};
@@ -43,29 +43,29 @@
 			return this.getStaves()[this.staffPosition];
 		}
 
-		this.getNotes = function() {
-			return this.getCurrentStaff()["notes"];
+		this.getSymbols = function() {
+			return this.getCurrentStaff()["symbols"];
 		}
 
-		this.getCurrentNote = function() {
-			return this.getNotes()[this.notePosition];
+		this.getCurrentSymbol = function() {
+			return this.getSymbols()[this.symbolPosition];
 		}
 
 		this.getCurrentDuration = function() {
 			var duration = 0;
-			var notes = this.getNotes();
-			for(i = 0; i < this.notePosition; i++) {
-				duration += notes[i]["duration"];
+			var symbols = this.getSymbols();
+			for(i = 0; i < this.symbolPosition; i++) {
+				duration += symbols[i]["duration"];
 			}
 			return duration;
 		}
 
 		this.findNearPosition = function(targetDuration) {
 			var duration = 0;
-			var notes = this.getNotes();
+			var symbols = this.getSymbols();
 			i = 0
-			for(; i < this.notePosition; i++) {
-				duration += notes[i]["duration"];
+			for(; i < this.symbolPosition; i++) {
+				duration += symbols[i]["duration"];
 				if (duration >= targetDuration) {
 					break;
 				}
@@ -75,18 +75,18 @@
 		}
 
 		this.next = function() {
-			if (this.notePosition < this.getNotes().length - 1) {
-				this.notePosition++;
-				renderNote(this, element);
+			if (this.symbolPosition < this.getSymbols().length - 1) {
+				this.symbolPosition++;
+				renderSymbol(this, element);
 			} else {
 				this.nextMeasure();
 			}
 		};
 
 		this.prev = function() {
-			if (this.notePosition > 0) {
-				this.notePosition--;
-				renderNote(this, element);
+			if (this.symbolPosition > 0) {
+				this.symbolPosition--;
+				renderSymbol(this, element);
 			} else {
 				this.prevMeasure(false, true);
 			}
@@ -101,28 +101,28 @@
 			}
 
 			var duration = this.getCurrentDuration();
-			this.notePosition = this.findNearPosition(duration);
+			this.symbolPosition = this.findNearPosition(duration);
 			renderStaff(this, element);
 		};
 
         this.nextMeasure = function() {
 			if (this.measurePosition < this.getMeasures().length - 1) {
 				this.measurePosition++;
-				this.notePosition = 0;
+				this.symbolPosition = 0;
 				renderMeasure(this, element);
 			}			
 		};
 
-		this.prevMeasure = function(resetStaff, avoidResetNote) {
+		this.prevMeasure = function(resetStaff, avoidResetSymbol) {
 			if (this.measurePosition > 0) {
 				this.measurePosition--;
 				if (resetStaff) {
 					this.staffPosition = this.getStaves().length - 1;
 				}
-				if (avoidResetNote) {
-					this.notePosition = this.getNotes().length - 1;
+				if (avoidResetSymbol) {
+					this.symbolPosition = this.getSymbols().length - 1;
 				} else {
-					this.notePosition = 0;
+					this.symbolPosition = 0;
 				}
 				renderMeasure(this, element);
 			}			
@@ -133,12 +133,15 @@
 		};
 		
 		this.play = function() {
-			var currentNote = this.getCurrentNote();
-			var noteName = currentNote.pitch + currentNote.octave;
-			if (window.MIDI) {
-				note = MIDI.keyToNote[noteName];
-				MIDI.noteOn(0, note, 127, 0);
-				MIDI.noteOff(0, note, 0.75);			
+      if (window.MIDI) {
+        var sounds = this.getCurrentSymbol()["sounds"];
+        if (sounds) {
+          for(i=0; i < sounds.length; i++) {
+            note = MIDI.keyToNote[sounds[i]];
+            MIDI.noteOn(0, note, 127, 0);
+            MIDI.noteOff(0, note, 0.75);      
+          }
+        }
 			}
 		}
 
@@ -166,11 +169,11 @@
 
 	function renderStaff(self, element) {
 		element.find("#staff").html(self.getCurrentStaff()["name"])
-		renderNote(self, element);
+		renderSymbol(self, element);
 	}
 
-	function renderNote(self, element) {
-		element.find("#note").html(self.getCurrentNote()["name"]);
+	function renderSymbol(self, element) {
+		element.find("#symbol").html(self.getCurrentSymbol()["name"]);
 	}
 
 	function setNavigationBindings(self, element) {

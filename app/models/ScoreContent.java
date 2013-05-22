@@ -54,7 +54,7 @@ public class ScoreContent {
 		Staff staff = new Staff(0);
 		measure.getStaves().add(staff);
 
-		staff.getNotes().add(new End());
+		staff.getSymbols().add(new End());
 
 	}
 }
