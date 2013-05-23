@@ -43,7 +43,6 @@ public class Measure {
 		Staff stave = new Staff(measure.staves.size() + 1);
 		measure.staves.add(stave);
 
-		Chord currentChord = null;
 		Note last = null;
 		
 		for (Object noteOrBackupOrForward : xmlMeasure
@@ -56,18 +55,10 @@ public class Measure {
 				Note note = Note
 						.fromXmlNote((com.audiveris.proxymusic.Note) noteOrBackupOrForward);
 				if (note.chord()) {
-					if (currentChord != null) {
-						currentChord.add(note);
-					} else {
-						currentChord = new Chord();
-						currentChord.add(last);
-						stave.getSymbols().remove(last);
-						stave.getSymbols().add(currentChord);
-					}
-				} else {
-					currentChord = null;
-					stave.getSymbols().add(note);
+					note = last.chordWidth(note);
+					stave.getSymbols().remove(last);
 				}
+				stave.getSymbols().add(note);
                 last = note;
 			} else if (noteOrBackupOrForward instanceof Backup) {
 				stave = new Staff(measure.staves.size() + 1);

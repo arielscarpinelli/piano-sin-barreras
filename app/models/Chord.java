@@ -9,6 +9,11 @@ public class Chord extends Note {
 	
 	private SortedSet<Note> notes = new TreeSet<Note>();
 	
+	public Chord(Note note, Note note2) {
+		add(note);
+		add(note2);
+	}
+
 	@Override
 	public List<String> getSounds() {
 		List<String> sounds = new ArrayList<String>();
@@ -45,4 +50,9 @@ public class Chord extends Note {
 		return duration;
 	}
 
+	@Override
+	public Chord chordWidth(Note note) {
+		add(note);
+		return this;
+	}
 }

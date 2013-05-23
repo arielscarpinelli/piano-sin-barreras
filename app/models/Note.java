@@ -164,4 +164,8 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 		}
 	}
 
+	public Chord chordWidth(Note note) {
+		return new Chord(this, note);
+	}
+
 }
