@@ -133,15 +133,27 @@
 		};
 		
 		this.play = function() {
-      if (window.MIDI) {
-        var sounds = this.getCurrentSymbol()["sounds"];
-        if (sounds) {
-          for(i=0; i < sounds.length; i++) {
-            note = MIDI.keyToNote[sounds[i]];
-            MIDI.noteOn(0, note, 127, 0);
-            MIDI.noteOff(0, note, 0.75);      
-          }
-        }
+			if (window.MIDI) {
+		        var sounds = this.getCurrentSymbol()["sounds"];
+		        var arpeggiate = false;
+		        if (sounds) {
+		          var start = 0;
+		          for(i=0; i < sounds.length; i++) {
+		        	sound = sounds[i];
+		        	if (sound == "arpeg") {
+		        		arpeggiate = true;
+		        		continue;
+		        	}
+		            note = MIDI.keyToNote[sound];
+		            if (note) {
+		            	MIDI.noteOn(0, note, 127, start);
+		            	MIDI.noteOff(0, note, start + 0.75);
+		            }
+		            if (arpeggiate) {
+		            	start+=0.05;
+		            }
+		          }
+		        }
 			}
 		}
 

@@ -20,7 +20,7 @@ public class Score {
 	}
 	
 	public static List<Score> findAll() {
-		return Arrays.asList(new Score("Invensión de Bach", "bach-invension"), new Score("Noche de paz", "noche-de-paz"));
+		return Arrays.asList(new Score("Minuet en Sol mayor", "bach-minuet-in-G"), new Score("Invensión de Bach", "bach-invension"), new Score("Noche de paz", "noche-de-paz"));
 	}
 	
 	public static Score findBySlug(String slug) {

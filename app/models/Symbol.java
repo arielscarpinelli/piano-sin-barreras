@@ -14,5 +14,4 @@ public abstract class Symbol {
 	public List<String> getSounds() {
 		return null;
 	}
-
 }

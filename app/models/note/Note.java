@@ -1,21 +1,32 @@
-package models;
+package models.note;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
+
+import models.ScoreContent;
+import models.Symbol;
+
 import com.audiveris.proxymusic.EmptyPlacement;
+import com.audiveris.proxymusic.Grace;
+import com.audiveris.proxymusic.Notations;
+import com.audiveris.proxymusic.Ornaments;
 import com.audiveris.proxymusic.Pitch;
+import com.audiveris.proxymusic.Tie;
+import com.audiveris.proxymusic.YesNo;
 
 public class Note extends Symbol implements Cloneable, Comparable<Note> {
 	
-	private NotePitch pitch = NotePitch.REST;
-	private int octave = 0;
+	protected NotePitch pitch = NotePitch.REST;
+	protected int octave = 0;
 	private NoteType type = null;
 	private int duration = 0;
-	private int alter = 0;
+	protected int alter = 0;
 	private int dots = 0;
 	private boolean chord;
+	private Boolean grace = null;
 
 	protected Note() {}
 	
@@ -37,24 +48,33 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 	@Override
 	public String getName() {
 		
-		String name = (pitch != null ? pitch.getTranslation() : "");
+		String name = "";
+
+		if (grace != null) {
+			name = "Apoyatura ";
+			if (grace) {
+				name += "breve ";
+			}
+		}
+
+		name += (pitch != null ? pitch.getHumanName() : "");
 
 		if (Math.abs(alter) == 2) {
-			name += " doble ";
+			name += " doble";
 		}
 		if (alter < 0) {
-			name += " bemol ";
+			name += " bemol";
 		}
 		if (alter > 0) {
-			name += " sostenido ";
+			name += " sostenido";
 		}
 		
 		if (octave > 0) {
-			name += " " + NoteOctave.valueOf("_" + octave).getTranslation();
+			name += " " + NoteOctave.valueOf("_" + octave).getHumanName();
 		}
 		
 		if (type != null) {
-			name += " " + type.getTranslation();
+			name += " " + type.getHumanName();
 		}
 		
 		if (dots > 0) {
@@ -64,7 +84,7 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 				name += " " + dots + " puntillos";
 			}
 		}
-		
+
 		return name;
 	}
 	
@@ -85,8 +105,9 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 		if (type != null) {
 			note.type = NoteType.valueOf("_" + type.getValue().toUpperCase());
 		}
-		
-		note.duration = xmlNote.getDuration().intValue();
+				
+		BigDecimal aDuration = xmlNote.getDuration();
+		note.duration = (aDuration != null) ? aDuration.intValue() : 0;
 		
 		List<EmptyPlacement> dots = xmlNote.getDot();
 		if (dots != null) {
@@ -97,6 +118,56 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 		
 		note.chord = (xmlNote.getChord() != null);
 		
+		Grace grace = xmlNote.getGrace();
+		note.grace = (grace != null) ? YesNo.YES.equals(grace.getSlash()) : null;
+		
+		for (Notations notations : xmlNote.getNotations()) {
+			note = applyNotations(notations.getTiedOrSlurOrTuplet(), note);
+		}
+		
+		for (Tie tie : xmlNote.getTie()) {
+			ScoreContent.unknown("Note", tie);
+		}
+
+		return note;
+	}
+
+	private static Note applyNotations(List<Object> notations, Note note) {
+		for(Object notation : notations) {
+			if (notation instanceof Ornaments) {
+				note = applyOrnaments(((Ornaments) notation).getTrillMarkOrTurnOrDelayedTurn(), note);
+//			} else if (notation instanceof AccidentalMark) {	
+//			} else if (notation instanceof Arpeggiate) {
+//			} else if (notation instanceof Articulations) {
+//			} else if (notation instanceof Dynamics) {
+//			} else if (notation instanceof Fermata) {
+//			} else if (notation instanceof Glissando) {
+//			} else if (notation instanceof NonArpeggiate) {
+//			} else if (notation instanceof OtherNotation) {
+//			} else if (notation instanceof Slide) {
+//			} else if (notation instanceof Slur) {
+//			} else if (notation instanceof Technical) {
+//			} else if (notation instanceof Tied) {
+//			} else if (notation instanceof Tuplet) {
+				
+				
+			} else {
+				ScoreContent.unknown("Notations", notation);
+			}
+		}
+		return note;
+	}
+
+	private static Note applyOrnaments(
+			List<JAXBElement<?>> ornaments, Note note) {
+		for (JAXBElement<?> ornamentElement : ornaments) {
+			Ornament ornament = Ornament.fromElement(ornamentElement);
+			if (ornament != null) {
+				note = ornament.decorate(note);
+			} else {
+				ScoreContent.unknown("Ornaments", ornamentElement.getName());
+			}
+		}
 		return note;
 	}
 
@@ -109,24 +180,22 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 		return  pitch.toString() + ((alter == -1) ? "b" : "")+ octave;
 	}
 
-	private Note flatOrSquare() {
-		return (alter == 0 || alter == -1) ? this : this.consumeAlter().flatOrSquare();
+	protected Note flatOrSquare() {
+		return (alter == 0 || (alter == -1 && pitch.canBeFlat())) ? this : this.consumeAlter().flatOrSquare();
 	}
 
 	private Note consumeAlter() {
 		Note result = doClone();
-		int sign = (alter > 0) ? -1 : 1;
+		int sign = (alter > 0) ? 1 : -1;
 		result.pitch = pitch.move(sign);				
-		result.alter += sign;
+		result.alter -= pitch.stepSize(sign);
 		if (pitch.changesOctaveWithMove(sign)) {
 			result.octave += sign;
-		} else {
-			result.alter += sign;			
 		}
 		return result;
 	}
 
-	private Note doClone() {
+	public Note doClone() {
 		try {
 			return (Note) this.clone();
 		} catch (CloneNotSupportedException e) {} // Not gona happen!
@@ -166,6 +235,11 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 
 	public Chord chordWidth(Note note) {
 		return new Chord(this, note);
+	}
+
+	public Note addAlter(int i) {
+		alter =+ i;
+		return this;
 	}
 
 }

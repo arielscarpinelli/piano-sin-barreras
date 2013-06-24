@@ -2,6 +2,8 @@ package models;
 
 import junit.framework.Assert;
 
+import models.note.NotePitch;
+
 import org.junit.Test;
 
 public class NotePitchTest {

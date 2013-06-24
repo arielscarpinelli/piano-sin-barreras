@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import play.Logger;
+
 import com.audiveris.proxymusic.ScorePartwise;
 import com.audiveris.proxymusic.ScorePartwise.Part;
 
@@ -57,4 +59,9 @@ public class ScoreContent {
 		staff.getSymbols().add(new End());
 
 	}
+
+	public static void unknown(String containerName, Object object) {
+		Logger.info("Found unknown " + object + " inside " + containerName);		
+	}
+
 }

@@ -4,10 +4,13 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.note.Note;
+
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.audiveris.proxymusic.Backup;
+import com.audiveris.proxymusic.Print;
 
 @JsonSerialize(include = Inclusion.NON_NULL)
 public class Measure {
@@ -60,10 +63,17 @@ public class Measure {
 				}
 				stave.getSymbols().add(note);
                 last = note;
+			} else if (noteOrBackupOrForward instanceof com.audiveris.proxymusic.Barline) {
+				stave.getSymbols().add(Barline.fromXml((com.audiveris.proxymusic.Barline)noteOrBackupOrForward));
+				last = null;
 			} else if (noteOrBackupOrForward instanceof Backup) {
 				stave = new Staff(measure.staves.size() + 1);
 				measure.staves.add(stave);
 				last = null;
+			} else if (noteOrBackupOrForward instanceof Print){
+				// Ignore print settings
+			} else {
+				ScoreContent.unknown("Measure", noteOrBackupOrForward);
 			}
 		}
 
