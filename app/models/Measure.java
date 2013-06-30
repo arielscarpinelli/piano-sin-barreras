@@ -101,6 +101,7 @@ public class Measure {
 	}
 
 	private void addToAllStaves(Symbol symbol) {
+		ensureStaves(1);
 		for(Staff staff : staves) {
 			staff.getSymbols().add(symbol);
 		}
