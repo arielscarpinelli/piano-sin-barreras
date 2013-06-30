@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import models.ScoreContent;
 import models.Symbol;
 
@@ -27,6 +29,7 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 	private int dots = 0;
 	private boolean chord;
 	private Boolean grace = null;
+	protected int staff = 1; // Staff is 1 based
 
 	protected Note() {}
 	
@@ -89,6 +92,11 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 	}
 	
 	public static Note fromXmlNote(com.audiveris.proxymusic.Note xmlNote) {
+
+		if (YesNo.NO.equals(xmlNote.getPrintObject())) {
+			return null;
+		}
+
 		Note note = new Note();
 
 		Pitch pitch = xmlNote.getPitch();
@@ -129,6 +137,10 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 			ScoreContent.unknown("Note", tie);
 		}
 
+		if (xmlNote.getStaff() != null) {
+			note.staff = xmlNote.getStaff().intValue();
+		}
+		
 		return note;
 	}
 
@@ -240,6 +252,11 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 	public Note addAlter(int i) {
 		alter =+ i;
 		return this;
+	}
+
+	@JsonIgnore
+	public int getStaff() {
+		return staff;
 	}
 
 }

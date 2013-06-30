@@ -1,5 +1,6 @@
 package models;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -17,6 +18,9 @@ public class Attributes extends Symbol {
 	private int timeLower;
 	private int timeUpper;
 	private Key key;
+
+	protected int divisions;
+	protected int staves = 1;
 	
 	public Key getKey() {
 		return key;
@@ -56,6 +60,15 @@ public class Attributes extends Symbol {
 			attributes.applyTime(time);
 		}
 		
+		BigDecimal divisions = xmlAttributes.getDivisions();
+		if (divisions != null) {
+			attributes.divisions = divisions.intValue();
+		}
+		
+		if (xmlAttributes.getStaves() != null) {
+			attributes.staves = xmlAttributes.getStaves().intValue();
+		}
+
 		return attributes;
 		
 	}

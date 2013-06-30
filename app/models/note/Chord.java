@@ -10,6 +10,7 @@ public class Chord extends Note {
 	private SortedSet<Note> notes = new TreeSet<Note>();
 	
 	public Chord(Note note, Note note2) {
+		staff = note.staff;
 		add(note);
 		add(note2);
 	}
@@ -25,6 +26,9 @@ public class Chord extends Note {
 
 	public void add(Note note) {
 		notes.add(note);
+		if (note.staff != staff) {
+			throw new IllegalArgumentException("Chord started for staff " + staff + " but recieved note for staff " + staff);
+		}
 	}
 
 	@Override
