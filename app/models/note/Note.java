@@ -30,6 +30,7 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 	private boolean chord;
 	private Boolean grace = null;
 	protected int staff = 1; // Staff is 1 based
+	protected String voice = null;
 
 	protected Note() {}
 	
@@ -141,6 +142,8 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 			note.staff = xmlNote.getStaff().intValue();
 		}
 		
+		note.voice = xmlNote.getVoice();
+
 		return note;
 	}
 
@@ -259,4 +262,8 @@ public class Note extends Symbol implements Cloneable, Comparable<Note> {
 		return staff;
 	}
 
+	@JsonIgnore
+	public String getVoice() {
+		return (voice != null) ? voice : "S" + Integer.toString(staff);
+	}
 }

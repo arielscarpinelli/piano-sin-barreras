@@ -50,14 +50,8 @@ public class ScoreContent {
 
 	public void addEnd() {
 		
-		Measure measure = new Measure();
-		measures.add(measure);
+		measures.get(measures.size() - 1).addToAllVoices(new End());
 		
-		Staff staff = new Staff(0);
-		measure.getStaves().add(staff);
-
-		staff.getSymbols().add(new End());
-
 	}
 
 	public static void unknown(String containerName, Object object) {

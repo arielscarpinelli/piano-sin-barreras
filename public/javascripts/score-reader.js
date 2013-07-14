@@ -3,7 +3,7 @@
 	$.scoreReader = function(element, options) {
 		this.options = {};
 		this.measurePosition = 0;
-		this.staffPosition = 0;
+		this.voicePosition = 0;
 		this.symbolPosition = 0;
 		this.score = null;
 
@@ -21,7 +21,7 @@
 		this.setScore = function(score) {
 			this.score = score;
 			this.measurePosition = 0;
-			this.staffPosition = 0;
+			this.voicePosition = 0;
 			this.symbolPosition = 0;
 
 			render(this, element)
@@ -35,16 +35,16 @@
 			return this.getMeasures()[this.measurePosition];
 		}
 		
-		this.getStaves = function() {
-			return this.getCurrentMeasure()["staves"]
+		this.getVoices = function() {
+			return this.getCurrentMeasure()["voices"]
 		}
 		
-		this.getCurrentStaff = function() {
-			return this.getStaves()[this.staffPosition];
+		this.getCurrentVoice = function() {
+			return this.getVoices()[this.voicePosition];
 		}
 
 		this.getSymbols = function() {
-			return this.getCurrentStaff()["symbols"];
+			return this.getCurrentVoice()["symbols"];
 		}
 
 		this.getCurrentSymbol = function() {
@@ -92,32 +92,35 @@
 			}
 		};
 
-		this.nextStaff = function() {
+		this.nextVoice = function() {
 
-			if (this.staffPosition < this.getStaves().length - 1) {
-				this.staffPosition++;
+			if (this.voicePosition < this.getVoices().length - 1) {
+				this.voicePosition++;
 			} else {
-				this.staffPosition = 0;
+				this.voicePosition = 0;
 			}
 
 			var duration = this.getCurrentDuration();
 			this.symbolPosition = this.findNearPosition(duration);
-			renderStaff(this, element);
+			renderVoice(this, element);
 		};
 
         this.nextMeasure = function() {
 			if (this.measurePosition < this.getMeasures().length - 1) {
 				this.measurePosition++;
 				this.symbolPosition = 0;
+				this.ensureVoice();
 				renderMeasure(this, element);
 			}			
 		};
 
-		this.prevMeasure = function(resetStaff, avoidResetSymbol) {
+		this.prevMeasure = function(resetVoice, avoidResetSymbol) {
 			if (this.measurePosition > 0) {
 				this.measurePosition--;
-				if (resetStaff) {
-					this.staffPosition = this.getStaves().length - 1;
+				if (resetVoice) {
+					this.voicePosition = this.getVoices().length - 1;
+				} else {
+					this.ensureVoice();					
 				}
 				if (avoidResetSymbol) {
 					this.symbolPosition = this.getSymbols().length - 1;
@@ -127,6 +130,12 @@
 				renderMeasure(this, element);
 			}			
 		};
+		
+		this.ensureVoice = function() {
+			if (this.voicePosition >= this.getVoices().length) {
+				this.voicePosition = this.getVoices().length - 1;
+			}
+		}
 
 		this.begin = function() {
 			this.setScore(this.score);
@@ -176,11 +185,16 @@
 
 	function renderMeasure(self, element) {
 		element.find("#measure").html(self.getCurrentMeasure()["name"])
-		renderStaff(self, element);
+		renderVoice(self, element);
 	}
 
-	function renderStaff(self, element) {
-		element.find("#staff").html(self.getCurrentStaff()["name"])
+	function renderVoice(self, element) {
+		voice = self.getCurrentVoice()["name"];
+		length = self.getVoices().length;
+		if(length > 1) {
+			voice += " (" + (self.voicePosition + 1) + " de " + length +")";
+		}
+		element.find("#voice").html(voice);
 		renderSymbol(self, element);
 	}
 
@@ -196,7 +210,7 @@
 			self.next();			
 		})
 		element.find(".hand").click(function() {
-			self.nextStaff();			
+			self.nextVoice();			
 		})
 		element.find(".prev").click(function() {
 			self.prev();			

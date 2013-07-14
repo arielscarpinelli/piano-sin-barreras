@@ -11,6 +11,7 @@ public class Chord extends Note {
 	
 	public Chord(Note note, Note note2) {
 		staff = note.staff;
+		voice = note.voice;
 		add(note);
 		add(note2);
 	}

@@ -1,14 +1,18 @@
 package models;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import models.note.NoteOctave;
+import models.note.NotePitch;
+
 import com.audiveris.proxymusic.Clef;
 import com.audiveris.proxymusic.Time;
 
-public class Attributes extends Symbol {
+public class Attributes extends Symbol implements Cloneable {
 	
 	public enum Key {
 		Do_mayor, Sol_mayor, Re_mayor, La_mayor, Mi_mayor, Si_mayor, Fa_sostenido_mayor, Re_bemol_mayor, La_bemol_mayor, Mi_bemol_mayor, Si_bemol_mayor, Fa_mayor,
@@ -22,6 +26,12 @@ public class Attributes extends Symbol {
 	protected int divisions;
 	protected int staves = 1;
 	
+	private List<NotePitch> clefs = new ArrayList<NotePitch>();
+	private List<NoteOctave> clefLines = new ArrayList<NoteOctave>();
+	
+	private NotePitch clef = null;
+	private NoteOctave clefLine = null;
+	
 	public Key getKey() {
 		return key;
 	}
@@ -34,11 +44,16 @@ public class Attributes extends Symbol {
 	@Override
 	public String getName() {
 		String toReturn = "";
-		if (timeLower > 0 && timeUpper > 0) {
-			toReturn += timeUpper + " sobre " + timeLower;
+		
+		if (clef != null) {
+			toReturn += "Clave de " + clef.getHumanName() + " en " + clefLine.getHumanName();
 		}
+		
 		if (key != null) {
 			toReturn += " Armadura de " + key.name().replace("_", " ");
+		}
+		if (timeLower > 0 && timeUpper > 0) {
+			toReturn += " " + timeUpper + " sobre " + timeLower;
 		}
 		return toReturn;
 	}
@@ -49,7 +64,7 @@ public class Attributes extends Symbol {
 		Attributes attributes = new Attributes();
 		
 		for(Clef clef : xmlAttributes.getClef()) {
-			attributes.applyClef(clef);
+			attributes.addClef(clef);
 		}
 
 		for(com.audiveris.proxymusic.Key key : xmlAttributes.getKey()) {
@@ -84,9 +99,10 @@ public class Attributes extends Symbol {
 		this.key = Key.values()[fifths];
 	}
 
-	private void applyClef(Clef clef) {
-		// TODO Auto-generated method stub
-		
+	private void addClef(Clef clef) {
+		clefs.add(
+				NotePitch.valueOf(clef.getSign().name()));
+		clefLines.add(NoteOctave.valueOf("_" + clef.getLine().toString()));
 	}
 
 	private void applyTime(Time time) {
@@ -95,6 +111,22 @@ public class Attributes extends Symbol {
 			timeUpper = Integer.parseInt(timeParts.get(0).getValue());
 			timeLower = Integer.parseInt(timeParts.get(1).getValue());
 		}
+	}
+
+	public Attributes cloneFor(int staff) {
+		Attributes result = null;
+		try {
+			result = (Attributes) clone();
+		} catch (CloneNotSupportedException e) {} // NOT GONNA HAPPEN!
+		
+		staff--;
+		
+		if (staff < clefs.size()) {
+			result.clef = clefs.get(staff);
+			result.clefLine = clefLines.get(staff);
+		}
+		
+		return result;
 	}
 
 }

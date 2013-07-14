@@ -1,6 +1,8 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import models.note.Note;
@@ -15,20 +17,22 @@ import com.audiveris.proxymusic.Print;
 public class Measure {
 
 	private int number;
-	private int divisions;
+	private Attributes attributes = null;
+	private List<Symbol> prependSymbols = null;
+	private List<Symbol> appendSymbols = null;
 
-	private List<Staff> staves = new ArrayList<Staff>();
+	private LinkedHashMap<String, Voice> voiceMap = new LinkedHashMap<String, Voice>();
 
-	public List<Staff> getStaves() {
-		return staves;
+	public Collection<Voice> getVoices() {
+		return voiceMap.values();
 	}
 
 	public int getNumber() {
 		return number;
 	}
 
-	public int getDivisions() {
-		return divisions;
+	public Integer getDivisions() {
+		return attributes != null ? attributes.divisions : null;
 	}
 
 	public String getName() {
@@ -41,9 +45,9 @@ public class Measure {
 
 		Measure measure = new Measure();
 		measure.number = Integer.parseInt(xmlMeasure.getNumber());
-		
+
 		Note last = null;
-		
+
 		for (Object noteOrBackupOrForward : xmlMeasure
 				.getNoteOrBackupOrForward()) {
 			if (noteOrBackupOrForward instanceof com.audiveris.proxymusic.Note) {
@@ -51,22 +55,24 @@ public class Measure {
 						.fromXmlNote((com.audiveris.proxymusic.Note) noteOrBackupOrForward);
 				if (note != null) {
 					// Note may be null if print-object = no
-					if (note.chord()) {
+					if (note.chord() && (last != null)) {
 						note = last.chordWidth(note);
-						measure.getStaffFor(last).getSymbols().remove(last);
+						measure.getVoiceFor(last).getSymbols().remove(last);
 					}
 					measure.addNote(note);
 				}
-	            last = note;
+				last = note;
 			} else {
 				last = null;
 				if (noteOrBackupOrForward instanceof com.audiveris.proxymusic.Attributes) {
-					measure.applyAttributes(Attributes.fromXmlAttributes((com.audiveris.proxymusic.Attributes) noteOrBackupOrForward));
+					measure.attributes = Attributes
+							.fromXmlAttributes((com.audiveris.proxymusic.Attributes) noteOrBackupOrForward);
 				} else if (noteOrBackupOrForward instanceof com.audiveris.proxymusic.Barline) {
-					measure.addToAllStaves(Barline.fromXml((com.audiveris.proxymusic.Barline)noteOrBackupOrForward));
+					measure.addBarline(Barline
+							.fromXml((com.audiveris.proxymusic.Barline) noteOrBackupOrForward));
 				} else if (noteOrBackupOrForward instanceof Backup) {
 					// Ignore backup
-				} else if (noteOrBackupOrForward instanceof Print){
+				} else if (noteOrBackupOrForward instanceof Print) {
 					// Ignore print settings
 				} else {
 					ScoreContent.unknown("Measure", noteOrBackupOrForward);
@@ -74,45 +80,82 @@ public class Measure {
 			}
 		}
 
+		measure.applySymbols();
+
 		return measure;
 	}
 
-	private Staff getStaffFor(Note note) {
-		ensureStaves(note.getStaff());
-		return staves.get(note.getStaff() - 1);
-	}
-
-	private void ensureStaves(int quantity) {
-		while(staves.size() < quantity) {
-			staves.add(new Staff(staves.size() + 1));
+	private Voice getVoiceFor(Note note) {
+		String voiceName = note.getVoice();
+		Voice voice = voiceMap.get(voiceName);
+		if (voice == null) {
+			voice = new Voice(voiceName, voiceMap.size() + 1);
+			voiceMap.put(voiceName, voice);
 		}
+		return voice;
 	}
 
 	private void addNote(Note note) {
-		getStaffFor(note).getSymbols().add(note);		
+		getVoiceFor(note).add(note);
 	}
 
-	private void applyAttributes(Attributes attributes) {
-		ensureStaves(attributes.staves);
-		for(Staff staff : staves) {
-			staff.getSymbols().add(0, attributes);
+	private void addBarline(Barline barline) {
+		if (barline.isDirectionForward()) {
+			prependSymbol(barline);
+		} else {
+			appendSymbol(barline);
 		}
-		divisions = attributes.divisions;
+
 	}
 
-	private void addToAllStaves(Symbol symbol) {
-		ensureStaves(1);
-		for(Staff staff : staves) {
-			staff.getSymbols().add(symbol);
+	private void prependSymbol(Symbol symbol) {
+		if (prependSymbols == null) {
+			prependSymbols = new ArrayList<Symbol>();
+		}
+		prependSymbols.add(symbol);
+	}
+
+	private void appendSymbol(Symbol symbol) {
+		if (appendSymbols == null) {
+			appendSymbols = new ArrayList<Symbol>();
+		}
+		appendSymbols.add(symbol);
+	}
+
+	private void applySymbols() {
+		for (Voice voice : getVoices()) {
+			
+			if (attributes != null) {
+				voice.prepend(attributes.cloneFor(voice.getStaff()));
+			}
+			
+			if (prependSymbols !=  null) {
+				for (Symbol symbol : prependSymbols) {
+					voice.prepend(symbol);
+				}
+			}
+			
+			if(appendSymbols != null) {
+				for (Symbol symbol : appendSymbols) {
+					voice.add(symbol);
+				}
+			}
 		}
 	}
 
 	public void join(Measure other) {
-		for (Staff stave : other.staves) {
-			stave.setPosition(staves.size() + 1);
-			staves.add(stave);
+		for (Voice voice : other.getVoices()) {
+			voice.setPosition(voiceMap.size() + 1);
+			voiceMap.put(other.getName() + " - " + voice.getOriginalName(),
+					voice);
 		}
 		// TODO: join attributes
+	}
+
+	public void addToAllVoices(End end) {
+		for (Voice voice : getVoices()) {
+			voice.add(end);
+		}
 	}
 
 }
